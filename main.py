@@ -2,7 +2,17 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from crewai import Agent, Crew, Task
 
-app = FastAPI()
+app = FastAPI(
+    title="CrewAI Backend",
+    description="API for analyzing user preferences and recommending plans.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+@app.get("/")
+async def root():
+    return {"message": "CrewAI backend is running!"}
 
 # Plans as before
 plans = [
