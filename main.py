@@ -24,6 +24,7 @@ plans = [
 
 class PreferenceRequest(BaseModel):
     preferences: str
+    plans: list
 
 @app.post("/run")
 async def run_crew(req: PreferenceRequest):
