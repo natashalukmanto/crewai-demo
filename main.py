@@ -14,13 +14,6 @@ app = FastAPI(
 async def root():
     return {"message": "CrewAI backend is running!"}
 
-# Plans as before
-plans = [
-    {"name": "BlueCare Basic", "deductible": 3000, "monthly_premium": 400, "network": "PPO"},
-    {"name": "Kaiser Standard", "deductible": 1500, "monthly_premium": 500, "network": "Kaiser"},
-    {"name": "HSA Saver Plan", "deductible": 5000, "monthly_premium": 300, "network": "PPO"},
-    {"name": "Premium Choice", "deductible": 1000, "monthly_premium": 600, "network": "PPO"},
-]
 
 class PreferenceRequest(BaseModel):
     preferences: str
@@ -29,6 +22,7 @@ class PreferenceRequest(BaseModel):
 @app.post("/run")
 async def run_crew(req: PreferenceRequest):
     user_text = req.preferences
+    plans = req.plans
 
     # (Your existing agent & task definitions here...)
 
