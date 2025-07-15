@@ -14,17 +14,26 @@ app = FastAPI(
 async def root():
     return {"message": "CrewAI backend is running!"}
 
-
 class PreferenceRequest(BaseModel):
     preferences: str
     plans: list
+
+def format_plans(plans_list):
+    formatted = ""
+    for plan in plans_list:
+        formatted += (
+            f"\n- Name: {plan.get('name')}\n"
+            f"  Deductible: {plan.get('deductible')}\n"
+            f"  Monthly Premium: {plan.get('monthly_premium')}\n"
+            f"  Network: {plan.get('network')}\n"
+        )
+    return formatted
 
 @app.post("/run")
 async def run_crew(req: PreferenceRequest):
     user_text = req.preferences
     plans = req.plans
-
-    # (Your existing agent & task definitions here...)
+    formatted_plans = format_plans(plans)
 
     # Define agents
     preference_analyzer = Agent(
@@ -58,7 +67,7 @@ User Preferences:
     )
 
     task2 = Task(
-        description=f"""Use the following plans data: {plans}
+        description=f"""Use the following plans data: {formatted_plans}
 and the extracted employee preferences from the Preference Analyzer.
 Rank the plans from best to worst based on how they match the employee's preferences...
 """,
