@@ -276,7 +276,11 @@ def run_workflow(question, user_id):
         allow_delegation=False,
         verbose=True
     )
-    first_task = Task(description=stage1_prompt, agent=first_agent)
+    first_task = Task(
+        description=stage1_prompt,
+        agent=first_agent,
+        expected_output="A well-formatted markdown answer to the user's benefits question with sources cited at the bottom."
+    )
     first_crew = Crew(agents=[first_agent], tasks=[first_task], verbose=True)
     first_response = first_crew.kickoff()
 
@@ -301,7 +305,11 @@ def run_workflow(question, user_id):
             allow_delegation=False,
             verbose=True
         )
-        second_task = Task(description=stage2_prompt, agent=second_agent)
+        second_task = Task(
+            description=stage2_prompt,
+            agent=second_agent,
+            expected_output="A well-formatted markdown answer to the user's benefits question with sources cited at the bottom."
+        )
         second_crew = Crew(agents=[second_agent], tasks=[second_task], verbose=True)
         return second_crew.kickoff()
 
