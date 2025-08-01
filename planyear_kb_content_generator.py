@@ -269,7 +269,13 @@ def run_workflow(question, user_id):
 {chat_history or "None"}
 """
 
-    first_agent = Agent(role="Stage 1 Agent", goal="Answer benefits questions", allow_delegation=False, verbose=True)
+    first_agent = Agent(
+        role="Stage 1 Agent",
+        goal="Answer benefits questions",
+        backstory="An expert in employee benefits who helps answer employee questions using PlanYear's knowledge base.",
+        allow_delegation=False,
+        verbose=True
+    )
     first_task = Task(description=stage1_prompt, agent=first_agent)
     first_crew = Crew(agents=[first_agent], tasks=[first_task], verbose=True)
     first_response = first_crew.kickoff()
@@ -288,7 +294,13 @@ def run_workflow(question, user_id):
 **KNOWLEDGE BASE DOCUMENTS:**
 {vector_knowledge}
 """
-        second_agent = Agent(role="Stage 2 Agent", goal="Answer benefits questions", allow_delegation=False, verbose=True)
+        second_agent = Agent(
+            role="Stage 2 Agent",
+            goal="Answer benefits questions",
+            backstory="A benefits research specialist who searches the knowledge base to find detailed answers.",
+            allow_delegation=False,
+            verbose=True
+        )
         second_task = Task(description=stage2_prompt, agent=second_agent)
         second_crew = Crew(agents=[second_agent], tasks=[second_task], verbose=True)
         return second_crew.kickoff()
