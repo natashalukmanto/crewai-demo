@@ -231,14 +231,15 @@ class Query(BaseModel):
 # ---- Helpers ----
 def get_chat_history(user_id: str):
     res = supabase.table("chat_history") \
-        .select("role, content") \
+        .select("message") \
         .eq("user_id", user_id) \
         .order("created_at", desc=True) \
         .limit(4) \
         .execute()
 
     rows = res.data or []
-    return "\n".join(f"{'User' if r['role']=='user' else 'Assistant'}: {r['content']}" for r in reversed(rows))
+    # Just join the last 4 messages without role labeling
+    return "\n".join(r["message"] for r in reversed(rows))
 
 def get_vector_knowledge(question: str):
     res = requests.post(
