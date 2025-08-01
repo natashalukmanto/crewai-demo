@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from crewai import Agent, Task, Crew
 from supabase import create_client
+from uuid import UUID
+from pydantic import BaseModel
 import requests
 import os
 
@@ -226,13 +228,13 @@ ${vectorKnowledge.content}
 # ---- Models ----
 class Query(BaseModel):
     question: str
-    user_id: str
+    user_id: UUID
 
 # ---- Helpers ----
 def get_chat_history(user_id: str):
     res = supabase.table("chat_history") \
         .select("message") \
-        .eq("user_id", user_id) \
+        .filter("user_id", "eq", user_id) \
         .order("created_at", desc=True) \
         .limit(4) \
         .execute()
