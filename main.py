@@ -34,6 +34,7 @@ async def run_crew(req: PreferenceRequest):
     user_text = req.preferences
     plans = req.plans
     formatted_plans = format_plans(plans)
+    print(formatted_plans)
 
     # Define agents
     preference_analyzer = Agent(

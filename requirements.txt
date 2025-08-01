@@ -1,4 +1,6 @@
 fastapi
 uvicorn
 crewai
-pydantic
+supabase
+python-dotenv
+requests
