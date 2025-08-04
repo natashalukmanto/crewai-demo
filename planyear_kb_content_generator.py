@@ -10,6 +10,34 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+import google.generativeai as genai
+
+# Load Gemini API key
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=GEMINI_API_KEY)
+
+def gemini_generate(prompt: str):
+    """Call Gemini Pro API to generate a response."""
+    model = genai.GenerativeModel("gemini-1.5-pro")
+    response = model.generate_content(prompt)
+    return response.text
+
+from crewai import LLM
+
+class GeminiLLM(LLM):
+    def __init__(self):
+        super().__init__(model="gemini-1.5-pro")  # pass model to parent
+        self.model = "gemini-1.5-pro"
+
+    def call(self, prompt, **kwargs):
+        # If prompt is a list of messages, flatten to text
+        if isinstance(prompt, list):
+            prompt = "\n".join(f"{m.get('role', '')}: {m.get('content', '')}" for m in prompt)
+        
+        return gemini_generate(prompt)
+
+gemini_llm = GeminiLLM()
+
 # Load env vars
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
@@ -274,7 +302,8 @@ def run_workflow(question, user_id):
         goal="Answer benefits questions",
         backstory="An expert in employee benefits who helps answer employee questions using PlanYear's knowledge base.",
         allow_delegation=False,
-        verbose=True
+        verbose=True, 
+        llm=gemini_llm
     )
     first_task = Task(
         description=stage1_prompt,
@@ -284,8 +313,13 @@ def run_workflow(question, user_id):
     first_crew = Crew(agents=[first_agent], tasks=[first_task], verbose=True)
     first_response = first_crew.kickoff()
 
-    # If insufficient info, run Stage 2
-    if "insufficient information" in first_response.lower():
+    # CrewOutput has `.raw` and `.outputs` attributes
+    if hasattr(first_response, "raw"):
+        output_text = str(first_response.raw)
+    else:
+        output_text = str(first_response)
+
+    if "insufficient information" in output_text.lower():
         vector_knowledge = get_vector_knowledge(question)
         stage2_prompt = f"""{STAGE_2_PROMPT}
 
@@ -303,7 +337,8 @@ def run_workflow(question, user_id):
             goal="Answer benefits questions",
             backstory="A benefits research specialist who searches the knowledge base to find detailed answers.",
             allow_delegation=False,
-            verbose=True
+            verbose=True, 
+            llm=gemini_llm
         )
         second_task = Task(
             description=stage2_prompt,
