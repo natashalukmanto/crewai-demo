@@ -255,8 +255,6 @@ def get_chat_history(user_id: str):
     return "\n".join(r["message"] for r in reversed(rows))
 
 def get_vector_knowledge(question: str):
-    print("\n[DEBUG] Searching Vectorize for question:", question)
-
     res = requests.post(
         VECTORIZE_URL,
         headers={
@@ -272,25 +270,27 @@ def get_vector_knowledge(question: str):
         print("[ERROR] Could not parse Vectorize JSON:", e)
         print("[RAW RESPONSE]", res.text)
         return ""
+    
+    return data
 
-    # Debugging output
-    print("\n[DEBUG] Full Vectorize response:")
-    import json as _json
-    print(_json.dumps(data, indent=2))
+    # # Debugging output
+    # print("\n[DEBUG] Full Vectorize response:", data)
+    # import json as _json
+    # # print(_json.dumps(data, indent=2))
 
-    matches = data.get("matches", [])
-    if not matches:
-        print("[DEBUG] No matches found for query.")
-        return ""
+    # matches = data.get("matches", [])
+    # if not matches:
+    #     print("[DEBUG] No matches found for query.")
+    #     return ""
 
-    print("\n[DEBUG] Top Matches (score + short content preview):")
-    for m in matches:
-        score = m.get("score")
-        content = m.get("payload", {}).get("content", "")
-        preview = content[:120].replace("\n", " ") + "..." if content else ""
-        print(f"  - Score: {score:.4f} | Preview: {preview}")
-
-    return "\n\n".join(m["payload"]["content"] for m in matches if "payload" in m)
+    # print("\n[DEBUG] Top Matches (score + short content preview):")
+    # for m in matches:
+    #     score = m.get("score")
+    #     content = m.get("payload", {}).get("content", "")
+    #     preview = content[:120].replace("\n", " ") + "..." if content else ""
+    #     print(f"  - Score: {score:.4f} | Preview: {preview}")
+    # return res
+    # return "\n\n".join(m["payload"]["content"] for m in matches if "payload" in m)
 
 # ---- Main workflow ----
 def run_workflow(question, user_id):
