@@ -263,7 +263,7 @@ def get_vector_knowledge(question: str):
             "Authorization": f"Bearer {VECTORIZE_KEY}",
             "Content-Type": "application/json"
         },
-        json={"question": question}
+        json={"question": question, "numResults": 10}
     )
 
     try:
