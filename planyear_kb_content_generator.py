@@ -165,17 +165,9 @@ Benefits At-A-Glance\n\nAutomattic Inc., Benefits Guide 2025 Effective Period: J
     "content": "Automattic Inc., Benefits Guide 2025 Effective Period: January 01, 2025 December 31, 2025 \n Important Benefit Contact Resources\n\nAutomattic Inc., Benefits Guide 2025 Effective Period: January 01, 2025 December 31, 2025\n\n<table><tr><th>Contact</th><th>Phone</th><th>Website/Email</th></tr><tr><td>InsightTimer</td><td></td><td>https://insighttimer.com/</td></tr><tr><td>Guardian</td><td></td><td>https://www.guardianlife.com/life-insurance</td></tr><tr><td>Kaiser Permanente HI</td><td>1-800-966-5955</td><td>https://healthy.kaiserpermanente.org/hawaii</td></tr><tr><td>Ten Percent Happier</td><td></td><td>https://www.tenpercent.com/</td></tr><tr><td>Automattic</td><td>1-844-258-6489</td><td>https://automattic.com/</td></tr><tr><td>GoodRx</td><td>1-855-268-2822</td><td>https://www.goodrx.com/</td></tr><tr><td>Kaiser Permanente Southern CA</td><td>1-800-464-4000</td><td>https://healthy.kaiserpermanente.org/southern-california</td></tr><tr><td>Aetna</td><td></td><td>https://www.aetna.com</td></tr><tr><td>Automattic</td><td>1-844-258-6489</td><td>https://automattic.com/</td></tr><tr><td>Kaiser Permanente Rx Delivery/Coupons</td><td>1-800-464-4000</td><td>https://healthy.kaiserpermanente.org/learn/pharmacy</td></tr><tr><td>Betterment</td><td></td><td>https://www.betterment.com/retirement, https:/www.betterment.com</td></tr><tr><td>Kaiser Permanente Northern CA</td><td>1-800-464-4000</td><td>https://healthy.kaiserpermanente.org/northern-california</td></tr><tr><td>Headspace</td><td></td><td>https://www.headspace.com/</td></tr><tr><td>Aetna</td><td>1-844-365-7373</td><td>https://www.aetna.com</td></tr><tr><td>Health Equity</td><td></td><td>https://healthequity.com</td></tr><tr><td>Kaiser Permanente Telehealth</td><td></td><td>https://healthy.kaiserpermanente.org/learn/how-to-use-telehealth</td></tr><tr><td>Automattic</td><td>1-844-258-6489</td><td>https://automattic.com/</td></tr><tr><td>Pet Benefit Solutions</td><td></td><td>https://www.petbenefits.com/</td></tr><tr><td>Aetna</td><td>1-800-872-3862</td><td>https://www.aetna.com</td></tr><tr><td>HMAA</td><td>1-808-941-4622</td><td>https://www.hmaa.com/</td></tr><tr><td>Aetna</td><td></td><td>https://www.aetna.com/services/telehealth.html</td></tr><tr><td>Ladder</td><td></td><td>https://www.ladderlife.com/</td></tr><tr><td>Aetna</td><td></td><td>https://www.aetna.com/individuals-families/pharmacy/rx-home-delivery.html</td></tr><tr><td>Legal Shield</td><td></td><td>https://www.legalshield.com/</td></tr><tr><td>Guardian (VSP)</td><td>1-800-627-4200</td><td>https://www.guardianlife.com/</td></tr><tr><td>Aetna</td><td>1-877-204-9186</td><td>https://www.aetna.com</td></tr><tr><td>Aetna</td><td></td><td>https://www.aetna.com</td></tr><tr><td>Waking Up</td><td></td><td>https://www.wakingup.com/</td></tr><tr><td>Kaiser Permanente Colorado</td><td></td><td>https://healthy.kaiserpermanente.org/</td></tr><tr><td>Calm</td><td></td><td>https://www.calm.com</td></tr></table>\n\nLUMITY\nALERA GROUP COMPANY\n\nThis Benefits Guide offers a high-level overview of your available benefits. The official Plan Documents are what govern your official rights and coverage under each plan. \n This Benefits Guide offers a high-level overview of your available benefits. The official Plan Documents are what govern your official rights and coverage under each plan.",
     "page": "12"
 }
-]
-
-**CURRENT QUESTION:**
-${message}
-
-**PAST CHAT HISTORY**
-<past_chat_history>
-    ${recentHistory.map((msg) => ${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}).join("\n")}
-</past_chat_history>
-  
+] 
 """
+
 STAGE_2_PROMPT = """
 AI Employee Assistant Prompt v3.0 - Stage 2
     
@@ -242,15 +234,6 @@ content:
 4. Do not answer questions outside of employee benefits
 5. You have to follow the example_response in terms of formatting
 6. Sources should be cited at the very bottom of your response with appropriate break lines between each source
-
-**CURRENT QUESTION:**
-${message}
-
-${contextualHistory ? **RELEVANT CHAT HISTORY:**
-${contextualHistory}
-
- : ""}**KNOWLEDGE BASE DOCUMENTS:**
-${vectorKnowledge.content}
 """
 
 # ---- Models ----
@@ -278,7 +261,7 @@ def get_vector_knowledge(question: str):
             "Authorization": f"Bearer {VECTORIZE_KEY}",
             "Content-Type": "application/json"
         },
-        json={"topK": 5, "query": question}
+        json={"topK": 10, "query": question}
     )
     data = res.json()
     return "\n\n".join(m["payload"]["content"] for m in data.get("matches", []))
